@@ -18,4 +18,11 @@ RSpec.describe 'the sinatra application' do
         get '/bubblebabble/fubar'
         expect(last_response.body).to eq(Digest::SHA256.bubblebabble 'fubar')
     end
+
+    it 'will save babble results to memcache' do
+        options = { namespace: ENV['MEMCACHE_NAMESPACE'] }
+        cache = Dalli::Client.new(ENV['MEMCACHE_SERVERS'], options)
+        get '/bubblebabble/foo'
+        expect(cache.get('foo')).to eq(Digest::SHA256.bubblebabble('foo'))
+    end
 end
