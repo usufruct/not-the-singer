@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'digest/bubblebabble'
+require 'dalli'
 
 configure { set :server, :puma }
 
