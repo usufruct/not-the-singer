@@ -9,5 +9,9 @@ get '/' do
 end
 
 get '/bubblebabble/:message' do
-    Digest::SHA256.bubblebabble params[:message]
+    options = { namespace: ENV['MEMCACHE_NAMESPACE'] }
+    cache = Dalli::Client.new(ENV['MEMCACHE_SERVERS'], options)
+    result = cache.get(params[:message]) || Digest::SHA256.bubblebabble(params[:message])
+    cache.add(params[:message], result)
+    result
 end
